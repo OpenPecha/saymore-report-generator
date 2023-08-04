@@ -77,7 +77,7 @@ def get_annotation_time_report(repo_list, github_token):
     annotation_report['Summary'] = {
             'total_number_of_syllables': total_number_of_syllables, 
             'total_time_annotated': total_time_annotated, 
-            'avg_syllable_per_minute': total_number_of_syllables/total_time_annotated
+            'avg_syllable_per_minute': total_number_of_syllables/total_time_annotated if total_time_annotated else 0
             }
     return annotation_report
     
