@@ -1,2 +1,6 @@
 .env
 data
+__pycache__
+elan_to_segments/audio_16k
+elan_to_segments/audio_from_gh
+*.tsv
