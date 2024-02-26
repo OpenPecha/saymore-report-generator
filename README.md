@@ -42,6 +42,7 @@ This project is intended for STT_MV department lead who wants to get a report of
 ## Project dependencies
 Before using _Project Name_, ensure you have:
 * [elan_parser](https://github.com/OpenPecha/elan_parser)
+> pip install git+https://github.com/OpenPecha/elan_parser.git
 
 ## Instructions for use
 Get started with saymore-report-generator by running annotation_time_report.py file.
