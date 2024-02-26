@@ -1,8 +1,6 @@
-import yaml
 from pathlib import Path
 
-
-from elan_file_downloader import download_files_by_extension
+from copy_elan_file import copy_eaf_files
 from elan_parser.annotation_time import calculate_total_time_blank_segment, calculate_total_time_annotated
 from elan_parser.syllable_counter import get_syllable_count_from_eaf
 
@@ -23,19 +21,6 @@ def save_dict_to_csv(dictionary, file_path):
 
     print(f"Dictionary saved as CSV file: {file_path}")
 
-
-def dump_yaml(data,output_fn) -> Path:
-    with output_fn.open("w", encoding="utf-8") as fn:
-        yaml.dump(
-            data,
-            fn,
-            default_flow_style=False,
-            sort_keys=False,
-            allow_unicode=True,
-            Dumper=yaml.SafeDumper,
-        )
-    return output_fn
-
 def parse_eaf(eaf_file):
     delimeters = ['་', '།',]
     blank_segment_time = calculate_total_time_blank_segment(eaf_file)
@@ -52,10 +37,8 @@ def parse_eaf(eaf_file):
             'cost_syllable_annotated': f'Rs{cost_of_syllable_annotated}',
             'total_cost': f'Rs{total_cost}'
             }
-    
 
-
-def get_annotation_time_report(repo_list, github_token):
+def get_annotation_time_report(repo_list, repo_path):
     total_number_of_syllables = 0
     total_time_annotated = 0
     avg_syllable_per_minute = 0
@@ -63,10 +46,10 @@ def get_annotation_time_report(repo_list, github_token):
     destination_folder = f"./data/eaf"
     repo_owner = 'MonlamAI'
     for repo in repo_list:
-        repo_url = f"https://api.github.com/repos/{repo_owner}/{repo}/contents/"
+        repo_path = f"{repo_path}/{repo}/"
         destination_file_path = f'{destination_folder}/{repo}.eaf'
         if not Path(destination_file_path).exists():
-            download_files_by_extension(repo_url, '.eaf', destination_file_path, github_token)
+            copy_eaf_files(repo_path, destination_file_path)
         if Path(destination_file_path).exists():
             eaf_report= parse_eaf(destination_file_path)
             total_time_annotated += eaf_report['with_speech_segment_time']
@@ -83,13 +66,9 @@ def get_annotation_time_report(repo_list, github_token):
     
 
 if __name__ == "__main__":
-    team_names = ['team_a', 'team_b', 'team_c', 'team_d',]
-    # team_names = ['overall']
+    team_names = ['team_a']
     for team_name in team_names:
-        # team_name = "team_a"
         repo_list = Path(f'./data/repo_list/{team_name}.txt').read_text().split('\n')
         repo_list = list(set(repo_list))
-        github_token = "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"
-        annotation_report = get_annotation_time_report(repo_list, github_token)
-        # dump_yaml(annotation_report, Path(f'./data/annotation_report/{team_name}.yaml'))
+        annotation_report = get_annotation_time_report(repo_list, repo_path="/home/ec2-user/SageMaker/STT_NW")
         save_dict_to_csv(annotation_report, Path(f'./data/annotation_report/{team_name}.csv'))
