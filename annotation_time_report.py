@@ -46,10 +46,10 @@ def get_annotation_time_report(repo_list, repo_path):
     destination_folder = f"./data/eaf"
     repo_owner = 'MonlamAI'
     for repo in repo_list:
-        repo_path = f"{repo_path}/{repo}/"
+        cur_repo_path = f"{repo_path}/{repo}/"
         destination_file_path = f'{destination_folder}/{repo}.eaf'
         if not Path(destination_file_path).exists():
-            copy_eaf_files(repo_path, destination_file_path)
+            copy_eaf_files(cur_repo_path, destination_file_path)
         if Path(destination_file_path).exists():
             eaf_report= parse_eaf(destination_file_path)
             total_time_annotated += eaf_report['with_speech_segment_time']
